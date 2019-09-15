@@ -5,7 +5,8 @@ import * as http from 'http';
 import * as os from 'os';
 import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose'
-
+import './env';
+import cors from 'cors'
 
 import { OpenApiValidator } from 'express-openapi-validator';
 import errorHandler from '../api/middlewares/error.handler';
@@ -13,11 +14,12 @@ import errorHandler from '../api/middlewares/error.handler';
 import l from './logger';
 
 const app = new Express();
-
+let port = process.env.PORT
 export default class ExpressServer {
   constructor() {
     const root = path.normalize(`${__dirname}/../..`);
     app.set('appPath', `${root}client`);
+    app.use(cors())
     app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || '100kb' }));
     app.use(
       bodyParser.urlencoded({
@@ -27,7 +29,11 @@ export default class ExpressServer {
     );
     app.use(cookieParser(process.env.SESSION_SECRET));
     app.use(Express.static(`${root}/public`));
-
+    app.use( function(req, res, next) {
+      l.info('Request URL:', req.originalUrl);
+      l.info('Request Type:', req.method);
+      next();
+    });
     const apiSpecPath = path.join(__dirname, 'api.yml');
     app.use(process.env.OPENAPI_SPEC || '/spec', Express.static(apiSpecPath));
     new OpenApiValidator({
@@ -42,7 +48,7 @@ export default class ExpressServer {
     return this;
   }
 
-  listen(port = process.env.PORT) {
+  listen() {
     const welcome = p => () =>
       l.info(
         `up and running in ${process.env.NODE_ENV ||
@@ -52,11 +58,11 @@ export default class ExpressServer {
     return app;
   }
 
-  connect (port = process.env.PORT) {
-    mongoose.connect('mongodb+srv://ulises:' + process.env.DB_PASSWORD + '@learncluster-hiv2z.azure.mongodb.net/test?retryWrites=true&w=majority',  { useNewUrlParser: true, useUnifiedTopology: true })
+  connect () {
+    mongoose.connect('mongodb+srv://'+process.env.DB_USERNAME+':' + process.env.DB_PASSWORD + '@learncluster-hiv2z.azure.mongodb.net/pokemon?retryWrites=true&w=majority',  { useNewUrlParser: true, useUnifiedTopology: true })
     var db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
-    db.once('open', this.listen(port))
+    db.once('open', this.listen)
     }
 }
 
