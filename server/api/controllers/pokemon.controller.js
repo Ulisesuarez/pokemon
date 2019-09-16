@@ -38,8 +38,22 @@ exports.update = function (req, res, next) {
 };
 
 exports.delete = function (req, res, next) {
-  Product.findByIdAndRemove(req.params.id, function (err) {
+  Pokemon.findByIdAndRemove(req.params.id, function (err) {
     if (err) return next(err);
     res.status(200).send('Deleted successfully!');
   })
+};
+
+exports.countAll = function(req, res, next) {
+  Pokemon.countDocuments().exec((err, count) => {
+    if (err) return next(err);
+    res.status(200).send({ count: count });
+  });
+};
+
+exports.findAll = function(req, res, next) {
+  Pokemon.find({}, function (err, all) {
+    if (err) return next(err);
+    res.status(200).send(all);
+  });
 };

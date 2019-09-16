@@ -4,71 +4,339 @@ info:
   description: Pokemon CRUD
   version: 1.0.0
 servers:
-- url: /api/v1
+  - url: /api
 tags:
-- name: Examples
-  description: Simple example endpoints
-- name: Specification
-  description: The swagger API specification
+  - name: Pokemon
+    description: pokemon info endpoints
+  - name: Specification
+    description: The swagger API specification
 paths:
-  /examples:
+  /pokemon/all:
     get:
       tags:
-      - Examples
-      description: Fetch all examples
+        - Pokemons
+      description: Fetch all pokemon
       responses:
         200:
-          description: Returns all examples
+          description: Returns all pokemons
           content: {}
+  /pokemon/{id}:
+    get:
+      tags:
+        - Pokemons
+      parameters:
+        - name: id
+          in: path
+          description: The id of the pokemon to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return the pokemon with the specified id
+          content: {}
+        404:
+          description: pokemon not found
+          content: {}
+  /pokemon/count:
+    get:
+      tags:
+        - Pokemons
+      responses:
+        200:
+          description: Return the number of pokemon stored at db
+          content: {}
+
+  /pokemon/create:
     post:
       tags:
-      - Examples
-      description: Create a new example
+        - Pokemons
       requestBody:
-        description: an example
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExampleBody'
+              $ref: '#/components/schemas/createPokemon'
+      responses:
+        201:
+          description: Pokemon Created Succesfully
+          content: {}
+        500:
+          description: error while creating
+          content: {}
+  /pokemon/{id}/update:
+    put:
+      tags:
+        - Pokemons
+      parameters:
+        - name: id
+          in: path
+          description: The id of the pokemon to update
+          required: true
+          schema:
+            type: string
+      requestBody:
         required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updatePokemon'
       responses:
         200:
-          description: Returns all examples
+          description: Return the pokemon with the specified id
           content: {}
-  /examples/{id}:
+
+  /pokemon/{id}/delete:
+    delete:
+      tags:
+        - Pokemons
+      parameters:
+        - name: id
+          in: path
+          description: The id of the pokemon to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: deletion was succesfull
+          content: {}
+
+
+  /trainer/{id}/count:
     get:
       tags:
-      - Examples
+        - Trainer
+      description: count the pokemons of a trainer
       parameters:
-      - name: id
-        in: path
-        description: The id of the example to retrieve
-        required: true
-        schema:
-          type: integer
+        - name: id
+          in: path
+          description: The id of the trainer
+          required: true
+          schema:
+            type: string
       responses:
         200:
-          description: Return the example with the specified id
+          description: Returns the number of pokemons that this trainer has
           content: {}
+  /trainer/{id}:
+    get:
+      tags:
+        - Trainer
+      parameters:
+        - name: id
+          in: path
+          description: The id of the trainer to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return the trainer with the specified id
+          content:
+            applicaion/json:
+              schema:
+                $ref: '#/components/schemas/trainer'
         404:
-          description: Example not found
+          description: trainer not found
           content: {}
+  /trainer/create:
+    post:
+      tags:
+        - Trainer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/trainer'
+      responses:
+        201:
+          description: Trainer Created Succesfully
+          content: {}
+        500:
+          description: error while creating
+          content: {}
+  /trainer/{id}/update:
+    put:
+      tags:
+        - Trainer
+      parameters:
+        - name: id
+          in: path
+          description: The id of the trainer to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateTrainer'
+      responses:
+        200:
+          description: Return the updated trainer
+          content: {}
+  /trainer/{id}/add-pokemon:
+    put:
+      tags:
+        - Trainer
+      parameters:
+        - name: id
+          in: path
+          description: The id of the trainer
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addPokemon'
+      responses:
+        200:
+          description: Return the  updated trainer
+          content: {}
+  /trainer/{id}/delete-pokemon/:pokemon:
+    put:
+      tags:
+        - Trainer
+      parameters:
+        - name: id
+          in: path
+          description: The id of the trainer
+          required: true
+          schema:
+            type: string
+        - name: pokemon
+          in: path
+          description: The id of the pokemon to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Return the  updated trainer
+          content: {}
+
+  /trainer/{id}/delete:
+    delete:
+      tags:
+        - Trainer
+      parameters:
+        - name: id
+          in: path
+          description: The id of the pokemon to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: deletion was succesfull
+          content: {}
+
   /spec:
     get:
       tags:
-      - Specification
+        - Specification
       responses:
         200:
           description: Return the API specification
           content: {}
 components:
   schemas:
-    ExampleBody:
-      title: example
+    createPokemon:
+      title: createPokemon
       required:
-      - name
+        - name
+        - num
+        - type
       type: object
       properties:
         name:
           type: string
-          example: no_stress
+          example: Pikachu
+        num:
+          type: number
+          example: 25
+        type:
+          type: array
+          items:
+            type: string
+          example: [Electric]
+
+    updatePokemon:
+      title: updatePokemon
+      type: object
+      properties:
+        name:
+          type: string
+          example: Pikacha
+        type:
+          type: array
+          items:
+            type: string
+          example: [Electric, Dragon]
+    trainer:
+      title: trainer
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: Ramón
+        lastname:
+          type: string
+          example: Ramirez
+        age:
+          type: number
+          example: 25
+        pokemons:
+          type: array
+          items:
+            type: object
+          example: [{_instanceID: 5d7e44ba1172f66873f8915b,
+                     _id: 5d7e44ba1172f66873f8915c,
+                     level: 10}]
+
+    updateTrainer:
+      title: updateTrainer
+      type: object
+      properties:
+        name:
+          type: string
+          example: Ash
+        lastname:
+          type: string
+          example: Ramirez
+        age:
+          type: number
+          example: 25
+        pokemons:
+          type: array
+          items:
+            type: object
+          example: [{_instanceID: 5d7e44ba1172f66873f8915b,
+                     _id: 5d7e44ba1172f66873f8915c,
+                     level: 10}]
+    addPokemon:
+      title: addPokemon
+      type: object
+      required:
+        - pokemonInfoId
+        - id
+        - level
+      properties:
+        pokemonInfoId:
+          type: string
+          example: 5d7e44ba1172f66873f8915b
+        id:
+          type: string
+          example: 5d7e44ba1172f66873f8915b
+        level:
+          type: number
+          example: 19
+
