@@ -64,9 +64,9 @@ npm run test:debug
 
 ## Try It
 * Open you're browser to [http://localhost:3000](http://localhost:3000)
-* Invoke the `/examples` endpoint 
+* Invoke the `/pokemon` endpoint 
   ```shell
-  curl http://localhost:3000/api/v1/examples
+  curl http://localhost:3000/api/
   ```
 
 
@@ -86,7 +86,6 @@ npm run test:debug
 
 #### Debug with VSCode
 
-Add these [contents](https://github.com/cdimascio/generator-express-no-stress/blob/next/assets/.vscode/launch.json) to your `.vscode/launch.json` file
 ## Lint It
 
 View prettier linter output
